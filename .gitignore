@@ -1,0 +1,6 @@
+__pycache__/
+.venv/
+input/
+output/
+reports/
+config/local.json

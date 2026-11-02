@@ -1,0 +1,5 @@
+[project]
+name = "retro-doc-lab"
+version = "0.0.0"
+requires-python = ">=3.10"
+description = "Source-grounded retrospective documentation agent scaffold"

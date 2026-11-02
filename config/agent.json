@@ -1,0 +1,28 @@
+{
+    "schema_version":  1,
+    "implemented":  false,
+    "source_root":  "C:\\workspace\\twins_project",
+    "output_root":  "output",
+    "skills":  [
+                   "inventory",
+                   "architecture",
+                   "workflows",
+                   "documentation",
+                   "diagrams",
+                   "coverage"
+               ],
+    "exclude":  [
+                    ".git",
+                    ".venv",
+                    "node_modules",
+                    "__pycache__",
+                    "dist",
+                    "build",
+                    ".env",
+                    "*.pem",
+                    "*.key"
+                ],
+    "max_file_bytes":  1000000,
+    "network":  "disabled",
+    "source_access":  "read-only"
+}
