@@ -48,6 +48,9 @@ Code de sortie du nouveau scan : 0 pour generation reussie (couverture toujours
 partielle), 2 pour refus ou erreur. Les statuts et preuves sont dans le JSON;
 un rapprochement statique ne prouve ni le deploiement ni l'execution du parcours.
 Les configurations sensibles sont exclues en entier, ce qui peut masquer des services.
+`inventory.json` contient aussi un plan de lots deterministe, separe par composant
+et borne par nombre de fichiers et octets. Les lots ne contiennent que des chemins,
+tailles, lignes et empreintes; ils ne remplacent pas une analyse semantique.
 
 Verification du nouveau moteur, uniquement sur donnees synthetiques :
 

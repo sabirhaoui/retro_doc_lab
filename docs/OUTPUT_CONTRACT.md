@@ -31,3 +31,8 @@ The local phased pipeline may additionally emit `characterization.json`,
 `static-audit.json`, `sequence-index.json`, `sequences.md`, and `audit_report.md`.
 `audit_report.md` is produced only when the `reporter` phase is selected.
 Phase selection and completed prerequisites are recorded in `run.json`.
+
+The static scan's `inventory.json` also includes deterministic batches grouped
+by configured component and bounded by file count and bytes. Batch entries carry
+only source-relative paths, byte counts, line counts, and hashes; they do not
+include source text or imply complete documentation coverage.

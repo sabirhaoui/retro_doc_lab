@@ -1,1 +1,1 @@
-"""Agent scaffold: implementation intentionally pending."""
+"""Static analysis and source-grounded documentation tooling."""
