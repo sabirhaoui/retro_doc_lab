@@ -1,14 +1,37 @@
 # retro_doc_lab
-A source-grounded retrospective documentation agent scaffold. Implementation pending.
-Python 3.10+, no third-party dependencies for setup/diagnostics.
 
-1. Configure config/agent.json source_root as an absolute external repository path.
-2. Run: python scripts/diagnose_retro_doc_lab.py --root .
-3. Implement the agent in a later Project Twin conversation using the handoff.
-4. After a future run: python scripts/diagnose_retro_doc_lab.py --root . --phase postflight --run-id RUN_ID
+Outil de rétro-documentation statique en Python 3.11+ : il vise à produire une
+caractérisation, un audit d'architecture et des séquences Mermaid justifiés par
+des preuves dans le code. L'analyse est incrémentale ; les commandes non encore
+implémentées indiquent explicitement leur état au lieu de produire des rapports
+vides.
 
-Exit codes: 0 checks passed; 1 validation failures; 2 bad configuration/arguments;
-3 preflight structurally ready but agent implementation pending.
-Diagnostics check artifact structure and basic content, not factual correctness or
-Mermaid syntax. Use a Mermaid parser during agent implementation.
-Outputs and source inputs are ignored by Git. Never place secrets in configuration.
+## Installation et commandes de développement
+
+```powershell
+python -m pip install -e ".[dev]"
+.\scripts\dev.ps1 lint
+.\scripts\dev.ps1 test
+```
+
+La configuration par défaut est dans [retro_doc_lab.toml](retro_doc_lab.toml).
+Les chemins relatifs qu'elle contient sont résolus depuis le répertoire du
+fichier de configuration. L'outil n'exécute pas le code du dépôt analysé et ne
+doit écrire que dans le répertoire de sortie.
+
+## CLI
+
+```text
+retro-doc-lab analyze <chemin_source> [--out <dir>] [--no-llm]
+    [--max-sequences 5] [--config retro_doc_lab.toml]
+retro-doc-lab characterize <chemin_source> ...
+retro-doc-lab audit <chemin_source> ...
+retro-doc-lab sequences <chemin_source> ...
+retro-doc-lab validate <dir_sortie>
+```
+
+Les étapes d'analyse et de validation seront activées au fil des lots
+documentés dans [PLAN.md](PLAN.md) et
+[IMPLEMENTATION-LOG.md](IMPLEMENTATION-LOG.md). Le squelette de diagnostic
+historique (`scripts/diagnose_retro_doc_lab.py`) reste disponible pour le
+contrat de sortie v1 décrit dans `docs/OUTPUT_CONTRACT.md`.

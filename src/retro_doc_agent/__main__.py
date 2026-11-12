@@ -1,3 +1,6 @@
-import sys
-print("Agent is not implemented. Follow docs/IMPLEMENTATION_HANDOFF.md.", file=sys.stderr)
-sys.exit(3)
+"""Point d'entrée de `python -m retro_doc_agent`."""
+
+from retro_doc_agent.cli import app
+
+if __name__ == "__main__":
+    app()

@@ -1,0 +1,52 @@
+Metadata-Version: 2.4
+Name: retro-doc-lab
+Version: 0.1.0
+Summary: Analyse statique et rétro-documentation de projets logiciels
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: pydantic<3,>=2.7
+Requires-Dist: typer<1,>=0.12
+Provides-Extra: dev
+Requires-Dist: build<2,>=1.2; extra == "dev"
+Requires-Dist: mypy<2,>=1.10; extra == "dev"
+Requires-Dist: pytest<9,>=8; extra == "dev"
+Requires-Dist: pytest-cov<7,>=5; extra == "dev"
+Requires-Dist: ruff<1,>=0.5; extra == "dev"
+
+# retro_doc_lab
+
+Outil de rétro-documentation statique en Python 3.11+ : il vise à produire une
+caractérisation, un audit d'architecture et des séquences Mermaid justifiés par
+des preuves dans le code. L'analyse est incrémentale ; les commandes non encore
+implémentées indiquent explicitement leur état au lieu de produire des rapports
+vides.
+
+## Installation et commandes de développement
+
+```powershell
+python -m pip install -e ".[dev]"
+.\scripts\dev.ps1 lint
+.\scripts\dev.ps1 test
+```
+
+La configuration par défaut est dans [retro_doc_lab.toml](retro_doc_lab.toml).
+Les chemins relatifs qu'elle contient sont résolus depuis le répertoire du
+fichier de configuration. L'outil n'exécute pas le code du dépôt analysé et ne
+doit écrire que dans le répertoire de sortie.
+
+## CLI
+
+```text
+retro-doc-lab analyze <chemin_source> [--out <dir>] [--no-llm]
+    [--max-sequences 5] [--config retro_doc_lab.toml]
+retro-doc-lab characterize <chemin_source> ...
+retro-doc-lab audit <chemin_source> ...
+retro-doc-lab sequences <chemin_source> ...
+retro-doc-lab validate <dir_sortie>
+```
+
+Les étapes d'analyse et de validation seront activées au fil des lots
+documentés dans [PLAN.md](PLAN.md) et
+[IMPLEMENTATION-LOG.md](IMPLEMENTATION-LOG.md). Le squelette de diagnostic
+historique (`scripts/diagnose_retro_doc_lab.py`) reste disponible pour le
+contrat de sortie v1 décrit dans `docs/OUTPUT_CONTRACT.md`.
