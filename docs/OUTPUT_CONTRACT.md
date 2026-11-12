@@ -26,3 +26,11 @@ data, deployment, security observations, documentation gaps and uncertainty.
 Coverage measures only the declared inspected scope, never universal completeness.
 A missing existing documentation baseline must be reported, not treated as coverage.
 Record Mermaid parser version and validation outcome in limitations or an added field.
+
+## Inventory-only stage
+Until the analysis and documentation stages are implemented, the CLI writes a
+partial `output/<run-id>/` report containing `inventory.json`, `inventory.md`,
+and `run.json`. It does not satisfy the required full-run artifacts above, and
+must not be reported as completed. Inventory batches are deterministic lists of
+file paths, byte counts, line counts, and SHA-256 fingerprints; they do not
+contain source text.

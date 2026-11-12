@@ -1,1 +1,1 @@
-"""Agent scaffold: implementation intentionally pending."""
+"""Offline inventory stage for the retrospective documentation agent."""

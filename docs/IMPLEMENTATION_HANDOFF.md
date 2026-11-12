@@ -1,10 +1,14 @@
 # Next conversation: Project Twin implementation
-This repository is scaffolding only; there is no LLM integration or agent runner.
+The CLI now implements a local-only inventory and deterministic batch-planning
+stage. There is still no LLM integration or documentation-generation runner.
 Supply the Project Twin source location, existing docs and exclusions in that conversation.
 Confirm actual components from code before tailoring skills (do not assume a stack).
-Implement: inventory -> architecture/workflows -> Markdown/diagrams -> coverage -> validation.
-Support resumable bounded reads, source fingerprints, prompt-injection resistance,
-secret filtering, deterministic artifact paths and structured failures.
+Continue with: bounded architecture/workflow analysis -> Markdown/diagrams ->
+coverage -> validation. Consume the inventory batch manifests rather than loading
+the entire source tree into one context. Preserve per-file hashes and inspect
+only bounded batches; keep interrupted runs partial and resumable.
+Implement prompt-injection resistance, secret filtering and structured failures
+before adding a model integration.
 Implement a CLI with --config and --run-id; return nonzero for failure or incomplete work.
 Add tests using a small synthetic source fixture and known stale/missing docs.
 Verify read-only source behavior, excluded paths, oversized files, symbolic links,
