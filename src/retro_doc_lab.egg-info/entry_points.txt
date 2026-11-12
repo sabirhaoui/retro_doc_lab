@@ -1,0 +1,2 @@
+[console_scripts]
+retro-doc-lab = retro_doc_agent.scan:main

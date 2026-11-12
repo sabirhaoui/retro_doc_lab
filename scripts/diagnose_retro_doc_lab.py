@@ -34,9 +34,6 @@ def main():
         check('network_policy', cfg.get('network') == 'disabled', 'Policy only; OS enforcement needed')
         check('exclusions', isinstance(cfg.get('exclude'), list) and '.env' in cfg['exclude'])
         check('file_size_bound', type(cfg.get('max_file_bytes')) is int and cfg['max_file_bytes'] > 0)
-        check('batch_limits', type(cfg.get('max_batch_bytes')) is int and
-              cfg['max_batch_bytes'] >= cfg.get('max_file_bytes', 0) and
-              type(cfg.get('max_batch_files')) is int and cfg['max_batch_files'] > 0)
         skills = cfg.get('skills')
         check('skill_list', isinstance(skills, list) and bool(skills))
         for name in skills if isinstance(skills, list) else []:

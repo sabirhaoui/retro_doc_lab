@@ -1,1 +1,1 @@
-"""Offline inventory stage for the retrospective documentation agent."""
+"""Static analysis and source-grounded documentation tooling."""
