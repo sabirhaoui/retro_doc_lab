@@ -1,5 +1,205 @@
 # retro_doc_lab
-A source-grounded retrospective documentation agent scaffold. Implementation pending.
+
+## Cartographie statique v2 — Windows et Linux
+
+Architecture : [docs/architecture.md](docs/architecture.md). Le moteur est dans
+`src/retro_doc_agent`; `retro_doc_lab` expose la nouvelle CLI. Le pipeline historique
+ci-dessous est conserve. Python **3.11+**, bibliotheque standard uniquement pour le scan.
+
+Initialisation hors ligne depuis cette distribution (conserver le script avec
+`src`, `docs`, `profiles`, `skills` et `examples`) :
+
+```powershell
+python bootstrap_retro_doc_lab.py --parent C:\workspace
+```
+
+Le bootstrap cree `retro_doc_lab` sous le parent et ne remplace aucun fichier.
+Un second passage preserve les editions locales. Il verifie Python et `venv`,
+et affiche les commandes d'activation; il n'installe rien et ne contacte aucun serveur.
+
+Utilisation sans installation, PowerShell :
+
+```powershell
+$env:PYTHONPATH = "$PWD\src"
+$env:PYTHONDONTWRITEBYTECODE = '1'
+python -B -m retro_doc_lab scan --repo C:\chemin\depot --out output\scan-001
+python -B -m retro_doc_lab scan --repo C:\workspace\twins_project --profile profiles/project-twin.toml --out output\twin-001
+```
+
+Linux :
+
+```bash
+python3 -m venv .venv
+. .venv/bin/activate
+export PYTHONPATH="$PWD/src"
+python -B -m retro_doc_lab scan --repo /chemin/depot --out output/scan-001
+python -B -m retro_doc_lab scan --repo /chemin/project-twin --profile profiles/project-twin.toml --out output/twin-001
+```
+
+Installation editable facultative, dans un environnement disposant deja de pip,
+setuptools et wheel : `python -m pip install --no-index --no-build-isolation -e .`.
+Elle reste hors ligne; si ces outils manquent, utiliser `PYTHONPATH` ci-dessus.
+Le profil indique les chemins de composants, exclusions et limites; le depot est
+toujours fourni a l'execution. Un dossier de sortie neuf, hors du depot cible, est requis.
+
+Livrables : `index.md`, `architecture.json`, `inventory.json`, `coverage.json`,
+`run.json`, `validation.json`, les quatre vues Markdown et `diagrams/*.mmd`.
+Code de sortie du nouveau scan : 0 pour generation reussie (couverture toujours
+partielle), 2 pour refus ou erreur. Les statuts et preuves sont dans le JSON;
+un rapprochement statique ne prouve ni le deploiement ni l'execution du parcours.
+Les configurations sensibles sont exclues en entier, ce qui peut masquer des services.
+
+Verification du nouveau moteur, uniquement sur donnees synthetiques :
+
+```powershell
+python -B -m unittest discover -s tests -p test_scan.py -v
+```
+
+Limites : extraction TypeScript par motifs, resolution partielle des appels,
+Compose simple, Caddy non resolu, etats metier non reconstruits, aucune couverture
+complete revendiquee. Mermaid reste marque `unvalidated` sans parseur local.
+Voir `docs/verification-v2.md` pour les commandes effectivement executees et les resultats.
+
+### Reconstruire l'audit statique d'une version locale
+
+`run` produit directement `architecture-audit.md`, `security-audit.md`,
+`static-audit.json` et trois diagrammes Mermaid. L'analyse utilise les mêmes
+octets que l'inventaire, sans importer les modules inspectés. Elle extrait les
+imports Python résolus entre domaines et des signaux statiques d'API, de
+persistance et de sécurité. Chaque signal comporte un chemin, une plage de
+lignes et une empreinte. Les rapports ne recopient pas les valeurs littérales.
+
+```powershell
+python -B .\pipeline.py --config .\config\agent.json run --run-id twin-audit-v1
+```
+
+Le code de sortie `3` indique une revue partielle. Les imports ne décrivent
+pas les appels en exécution. La résolution des appels indirects, les frontières
+de confiance, les scénarios métier et l'efficacité des contrôles demandent une
+revue ciblée. Les diagrammes sont fournis sans validation par un parseur Mermaid.
+
+Le pipeline est séparé en phases `analyzer`, `audit`, `sequences` et `reporter`.
+Une phase ciblée exécute aussi ses prérequis; les étapes omises restent marquées
+comme non effectuées dans `run.json`. Le rapport assemblé est `audit_report.md`.
+
+```powershell
+python pipeline.py --config config/agent.json run --run-id audit-001 --step audit --verbose
+python pipeline.py --config config/agent.json run --run-id retro-001 --step reporter
+```
+
+`--step` peut être répété. Les diagrammes de séquence générés sont bornés aux
+20 routes les plus représentatives selon les signaux statiques; toutes les routes
+restent indexées dans `static-audit.json`. Les liens d'appels sont marqués comme
+inférés et ne remplacent pas une trace d'exécution.
+
+Pour générer le diagramme de composants UML d'un run local existant,
+utiliser la configuration du scan et son identifiant.
+
+```powershell
+python -B .\scripts\generate_architecture_uml.py --config .\config\agent.json --run-id twin-audit-v1
+```
+
+Le fichier `diagrams/architecture.puml` représente les imports résolus entre
+domaines. Chaque identifiant de flèche renvoie aux preuves dans
+`static-audit.json`. Le rendu se fait dans un outil PlantUML local.
+
+### Comparer deux versions de Project Twin
+
+Préparer chaque version dans la même copie locale de Project Twin, puis exécuter
+le scan depuis le lab. Utiliser la même configuration pour les deux scans.
+`--local-revision` accepte le commit relevé par l'opérateur. Le scanner conserve
+cette information comme déclaration et analyse les fichiers sur disque.
+
+```powershell
+$config = '.\config\agent.json'
+python pipeline.py --config $config run --run-id twin-v1
+# Préparer la version suivante dans la copie locale avant ce second scan.
+python pipeline.py --config $config run --run-id twin-v2
+python pipeline.py --config $config compare --baseline-run twin-v1 --run-id twin-v2
+python pipeline.py --config $config dashboard --port 8765
+```
+
+Sélectionner `twin-v2` dans le tableau de bord local pour visualiser les
+différences. Le fichier `impact-from-twin-v1.json` dans le dossier du second run
+contient les empreintes avant et après, les chemins indisponibles et les actions
+de revue regroupées par module. Les indices dans `change_indexes` commencent à
+zéro et référencent le tableau `changes`.
+
+Transmettre ce fichier et, si disponible, `audit-review.json` à l'agent qui
+qualifie l'impact. Les actions demandent de retracer les appels et les contrôles
+de sécurité, de citer les lignes actuelles et de rapprocher les constats d'audit
+avant de proposer un correctif. Les empreintes mesurent les changements de
+contenu. Les impacts fonctionnels et la sécurité en exécution restent à établir.
+
+GitHub revision scans: copy the lab configuration to `config/github.json`,
+replace `source_root` with `"github_repository": "OWNER/REPOSITORY"`, and set
+`"network": "github"`. Retain read-only access, skills, exclusions and bounds.
+Private repositories use the environment variable `RETRO_DOC_GITHUB_TOKEN`.
+Never store credentials in configuration or repository URLs.
+
+```powershell
+python pipeline.py --config config/github.json run --run-id release-1 --tag v1.0.0
+python pipeline.py --config config/github.json run --run-id release-2 --commit FULL_40_CHARACTER_SHA1 --baseline-run release-1
+```
+
+This scans an immutable GitHub revision without creating a working clone.
+Only eligible bounded blobs are downloaded; hooks, filters, submodule commands
+and inspected source never run. Source contents are not written to reports.
+Local directory mode retains its offline behavior with `network: disabled`.
+
+A baseline must have completed inventory, identical configuration and the same
+scanner version. Matching paths and Git blob IDs reuse metadata without fetching
+content. `run.json` records the resolved commit and added, changed, unchanged,
+deleted and reused paths. Excluded/uninspected files stay separate. Aggregate
+reports are regenerated and semantic coverage remains unknown. Truncated trees,
+API failures and rate limits fail the scan without emitting response bodies.
+Premier lancement sous Windows (tests, demo synthetique puis dashboard) :
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\premier-lancement.ps1
+```
+
+Options : `-SansDashboard` pour verifier seulement les tests et la demo,
+`-Port 8766` si le port est occupe, `-PythonPath 'C:\chemin\python.exe'`
+pour choisir Python. Aucun depot cible n'est analyse. Le dashboard reste au
+premier plan ; Ctrl+C l'arrete. Chaque lancement cree un dossier neuf sous output.
+
+A local, dependency-free static preparation pipeline and execution dashboard.
+Semantic source review and historical audit reconciliation remain pending; no model
+provider is connected. The target repository is not executed or modified.
+
+Run from this directory (Python 3.10+):
+
+```powershell
+python pipeline.py --config output/demo-lab/config/agent.json run --run-id demo-002
+python pipeline.py --config output/demo-lab/config/agent.json dashboard --port 8765
+```
+
+Open http://127.0.0.1:8765 for the read-only execution dashboard. It refreshes every
+three seconds, shows run stages and failures, and never serves source files.
+The demo configuration uses synthetic inputs under output, not twins_project.
+An existing run is rejected unless `--resume` is supplied; resume rejects source
+drift and configuration changes. Do not run concurrent writers for the same run ID.
+
+Tests (synthetic fixtures only):
+
+```powershell
+$env:PYTHONPATH = "$PWD/src"
+$env:PYTHONDONTWRITEBYTECODE = '1'
+python -m unittest discover -s tests -v
+```
+
+Exit codes: 1 failed execution, 2 invalid configuration, 3 partial preparation.
+Unknown coverage is deliberate: inventory and generated documents do not prove
+documentation completeness. Mermaid envelopes are checked, but a full parser is
+not bundled. Read-only/no-network design does not replace OS sandbox enforcement.
+No source code excerpts are emitted; paths, hashes and line ranges are retained.
+
+The imported bundle is preserved under output/retro-doc-pipeline. Its audit
+assessment is a separate, pending semantic workflow. No tests from that bundle or
+the target repository are executed by this pipeline.
+
+Original scaffold notes follow:
 Python 3.10+, no third-party dependencies for setup/diagnostics.
 
 1. Configure config/agent.json source_root as an absolute external repository path.

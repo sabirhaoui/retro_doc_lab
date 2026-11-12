@@ -1,0 +1,5 @@
+Metadata-Version: 2.4
+Name: retro-doc-lab
+Version: 0.1.0
+Summary: Source-grounded retrospective documentation agent scaffold
+Requires-Python: >=3.11

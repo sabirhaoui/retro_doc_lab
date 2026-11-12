@@ -1,0 +1,13 @@
+# Chemins indicatifs, sans imposer la presence d'une technologie.
+exclude = [".env*", "*.pem", "*.key", "*secret*", "*credential*", "package-lock.json", "*.min.js", "*.map"]
+
+[components]
+backend = "backend"
+frontend = "frontend"
+deployment = "deploy"
+services = "services"
+
+[limits]
+max_bytes = 1000000
+max_total = 50000000
+max_files = 10000

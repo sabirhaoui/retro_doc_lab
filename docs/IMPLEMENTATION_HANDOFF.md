@@ -1,5 +1,8 @@
 # Next conversation: Project Twin implementation
-This repository is scaffolding only; there is no LLM integration or agent runner.
+The local static runner and read-only execution dashboard are implemented.
+There is no LLM integration. Semantic architecture tracing, existing-document
+comparison and historical finding reconciliation remain future work. Inventory
+coverage stays unknown until that review is implemented and verified.
 Supply the Project Twin source location, existing docs and exclusions in that conversation.
 Confirm actual components from code before tailoring skills (do not assume a stack).
 Implement: inventory -> architecture/workflows -> Markdown/diagrams -> coverage -> validation.
