@@ -50,3 +50,5 @@ documentés dans [PLAN.md](PLAN.md) et
 [IMPLEMENTATION-LOG.md](IMPLEMENTATION-LOG.md). Le squelette de diagnostic
 historique (`scripts/diagnose_retro_doc_lab.py`) reste disponible pour le
 contrat de sortie v1 décrit dans `docs/OUTPUT_CONTRACT.md`.
+Summary: Source-grounded retrospective documentation agent scaffold
+Requires-Python: >=3.11
