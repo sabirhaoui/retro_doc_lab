@@ -1,0 +1,38 @@
+stages:
+  - setup
+  - lint
+  - test
+  - build
+  - scan
+
+default:
+  image: python:3.11
+  before_script:
+    - python -m pip install --upgrade pip
+    - python -m pip install -e ".[dev]"
+
+setup:
+  stage: setup
+  script:
+    - python -m pip check
+
+lint:
+  stage: lint
+  script:
+    - ruff check src tests
+    - mypy src
+
+test:
+  stage: test
+  script:
+    - pytest --cov=retro_doc_agent --cov-report=term-missing
+
+build:
+  stage: build
+  script:
+    - python -m build
+
+scan:
+  stage: scan
+  script:
+    - retro-doc-lab --help
