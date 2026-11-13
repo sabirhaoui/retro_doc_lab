@@ -18,15 +18,8 @@ dev = [
     "ruff>=0.5,<1",
 ]
 
-[project.scripts]
-retro-doc-lab = "retro_doc_agent.cli:app"
-
 [build-system]
 requires = ["setuptools>=69"]
-description = "Source-grounded retrospective documentation agent scaffold"
-
-[build-system]
-requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
@@ -48,6 +41,7 @@ mypy_path = "src"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
+
 [project.scripts]
-retro-doc-lab = "retro_doc_agent.scan:main"
+retro-doc-lab = "retro_doc_agent.cli:app"
 retro-doc-pipeline = "retro_doc_agent.pipeline:main"

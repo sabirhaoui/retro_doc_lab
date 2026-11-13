@@ -363,7 +363,7 @@ def main():
     serve.add_argument('--port', type=int, default=8765)
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO if getattr(args, 'verbose', False) else logging.WARNING,
-                        format='%(levelname)s %(message)s')
+                        format='%(levelname)s %(message)s', force=True)
     try:
         if args.command == 'compare':
             from .impact import compare
