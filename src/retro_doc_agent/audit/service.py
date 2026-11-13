@@ -30,6 +30,11 @@ CI_NAMES = {"azure-pipelines.yml", "bitbucket-pipelines.yml", ".gitlab-ci.yml"}
 SEVERITY_ORDER = {"critique": 0, "majeur": 1, "mineur": 2}
 
 
+def run(static_audit: Any, run_directory: Path, meta: dict[str, Any], omitted: list[str], unread: list[str]) -> None:
+    """Compatibilité avec le pipeline historique : produit les livrables d'audit statique."""
+    static_audit.write(run_directory, meta, omitted, unread)
+
+
 def audit(source_root: Path, output_root: Path, config: ToolConfig) -> Path:
     """Génère les livrables d'audit sans exécuter le dépôt source."""
     started_at = datetime.now(UTC)
