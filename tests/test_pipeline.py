@@ -99,19 +99,19 @@ class PipelineTests(unittest.TestCase):
         app = self.source / 'backend/app'
         app.mkdir(parents=True)
         (app / 'router.py').write_text(
-            'from .service import save_item\n'
+            'from .service import save_item, load_item\n'
             '@router.post("/items")\n'
-            'def create_item():\n'
-            '    collection.add("item")\n'
-            '    return save_item()\n',
+            'def post(): return save_item()\n'
+            '@router.get("/items/{id}")\n'
+            'def get(): return load_item()\n',
             encoding='utf-8',
         )
         (app / 'helpers.py').write_text('def add(value):\n    return value\n', encoding='utf-8')
         (app / 'service.py').write_text(
-            'def save_item():\n'
-            '    return persist()\n'
-            'def persist():\n'
-            '    return None\n',
+            'def save_item(): return persist()\n'
+            'def persist(): return None\n'
+            'def load_item(): return fetch_item()\n'
+            'def fetch_item(): return None\n',
             encoding='utf-8',
         )
         run, code = execute(self.config, 'sequences', steps=['sequences'])
@@ -129,6 +129,11 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(code, 3)
         self.assertTrue((report / 'audit_report.md').is_file())
         self.assertTrue((report / 'sequences.md').is_file())
+        sequence_doc = (report / 'sequences.md').read_text(encoding='utf-8')
+        self.assertIn('POST handler', sequence_doc)
+        self.assertIn('GET handler', sequence_doc)
+        self.assertIn('save_item (inféré)', sequence_doc)
+        self.assertIn('load_item (inféré)', sequence_doc)
         self.assertIn('```mermaid', (report / 'audit_report.md').read_text(encoding='utf-8'))
 
     def test_cli_selected_phase_and_verbose(self):

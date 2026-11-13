@@ -1,3 +1,3 @@
 [console_scripts]
 retro-doc-lab = retro_doc_agent.cli:app
-retro-doc-lab = retro_doc_agent.scan:main
+retro-doc-pipeline = retro_doc_agent.pipeline:main

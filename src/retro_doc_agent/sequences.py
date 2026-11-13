@@ -114,10 +114,11 @@ def generate(run):
            f'{len(selected)} séquence(s) détaillée(s) sur {len(routes)} route(s) observée(s). '
            'Les appels inter-modules résolus sont marqués « inféré ».', '']
     for row in index:
+        diagram_text = (run / row['diagram']).read_text(encoding='utf-8').rstrip()
         doc += [f"## {row['method']} {row['route'] or '(route dynamique)'}",
                 '', f"Handler : `{row['handler']}`; preuve `{row['route_evidence']['path']}:"
                 f"{row['route_evidence']['start_line']}-{row['route_evidence']['end_line']}`.",
-                '', '```mermaid', diagram_text.rstrip(), '```', '',
+                '', '```mermaid', diagram_text, '```', '',
                 f"Source Mermaid : `{row['diagram']}`.", '']
     if len(routes) > len(selected):
         doc += [f"Le détail est plafonné à {MAX_SEQUENCES} séquences; les autres routes restent indexées "
